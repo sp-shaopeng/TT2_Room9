@@ -1,18 +1,13 @@
 import React, {useState, useEffect} from "react";
 import "./ProjectView.css"
 import mockExpense from "../data/expense.json"
-import {nanoid} from "nanoid";
 import userService from './UserService'
 import { Button, Modal } from 'react-bootstrap';
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 
-const renderTableData = (props, onClick) => {
+const renderTableData = (props) => {
 
-    const handleClick = () => {
-      console.log("clicked!")
-    }
-  
     const { project_id, category_id,
             name, description, amount,
             created_at, created_by,
@@ -20,7 +15,8 @@ const renderTableData = (props, onClick) => {
   
     return (
       <tbody>
-        <tr key={project_id} onClick = {handleClick}>
+        <tr key={project_id} //onClick = {handleClick}
+        >
             <td>{project_id}</td>
             <td>{category_id}</td>
             <td>{name}</td>
@@ -37,10 +33,17 @@ const renderTableData = (props, onClick) => {
 
 
 const ExpenseView = () => {
+    const [expenses, setExpenses] = useState()
+    const {state} = useLocation();
+    const project_id = 2;
 
     const fetchData = () => {
-        return userService.getExpenses().then((response) => console.log(response.data))
-      }
+        return userService.getExpenses(project_id).then((response) => {
+            const myExpenses = response.data
+            setExpenses(myExpenses)
+            console.log(expenses)
+        })
+    }
     
     useEffect(() => {
     fetchData()
@@ -77,13 +80,13 @@ const ExpenseView = () => {
                 <th>Updated By</th>
               </tr>
             </thead>
-            {mockExpense.map(function(props){
-              return renderTableData(props)
-            })}
+            {expenses?.map((props) => {
+           return renderTableData(props)
+        })}
           </table>
-          <button onClick = {handleShow}>
+          {/* <button onClick = {handleShow}>
             Click here to update expense data
-          </button>
+          </button> */}
     
           <Modal
             show={show}
