@@ -22,6 +22,6 @@ export const mockProjects = [
   }
 ]
 
-export default {
-  mockProjects
-}
+// export default {
+//   mockProjects
+// }

@@ -1,15 +1,20 @@
-import React from "react"
+// import React, { useState } from "react"
 import Login from "./components/Login"
 import ProjectView from "./components/ProjectView";
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
-
+import ProjectView from "./components/ProjectView";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function App() {
+
   return (
     <div className="App">
-      <header className="App-header">
-        <ProjectView />
-      </header>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/projectView" element={<ProjectView />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }

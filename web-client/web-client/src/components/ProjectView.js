@@ -3,6 +3,7 @@ import {mockProjects} from '../data/mockProjects'
 import { Button, Modal } from 'react-bootstrap';
 import axios from "axios"
 import './ProjectView.css'
+import { Link } from "react-router-dom";
 
 const renderTableData = (props, onClick) => {
 
@@ -42,6 +43,17 @@ const ProjectView = () => {
 
   return (
     <div>
+      <nav>
+            <ul>
+            <li>
+                <Link to="/" 
+                    // onClick={signOut()}
+                >
+                    Sign out
+                </Link>
+            </li>
+            </ul>
+        </nav>
       <h1>Project View</h1>
       <table class="styled-table">
         <thead>
