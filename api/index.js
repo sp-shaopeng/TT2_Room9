@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 const express = require("express")
 const app = express()
 const cors = require('cors')
@@ -5,6 +7,7 @@ const pool = require('./db')
 const jwt = require('jsonwebtoken')
 const { values } = require("lodash")
 
+app.use(express.json())
 
 
 app.post('/signup', async (req, res) => {
@@ -18,7 +21,7 @@ app.post('/signup', async (req, res) => {
     }
 
 }) 
-
+    
 
 
 app.post('/login', async (req, res) => {
@@ -26,15 +29,16 @@ app.post('/login', async (req, res) => {
         //MAKE USE OF require('crypto').randomBytes(64).toString('hex') TO SET UP KEY IN .ENV FILE
 
         const {username, password} = req.body
-        const uid = await pool.query("SELECT id FROM users WHERE username=$1 and password=$2", [username, password]);
+
+        const uid = await pool.query("SELECT * FROM users u WHERE u.username=$1 and u.password=$2", [username, password]);
         if(uid.rows.length != 1) {
             return res.sendStatus(401)
         }
-        const user = { name: uid.rows["name"], id: uid.rows[0]["id"]}
+
+        const user = { name: uid.rows[0]["name"], id: uid.rows[0]["id"]}
 
         const accessToken = generateAccessToken(user)
-        const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET)
-        res.json({ accessToken: accessToken, refreshToken: refreshToken})
+        res.json({ accessToken: accessToken})
     } catch (err) {
         console.log(err.message)
         res.send(401)
@@ -70,12 +74,28 @@ function authenticateToken(req, res, next) {
 
 }
 
+//Get all projects
+app.post("/projects", authenticateToken, async (req, res) => {
+    try {
+        const projects = await pool.query("SELECT * FROM project");
+        res.json(projects.rows);
+    } catch (err) {
+        console.error(err.message)
+    }
+})
+
+
+
+
+
+
 
 // Get the list of expense based on the database
 app.post("/expenses", authenticateToken, async (req, res) => {
     try {
-        const newTodo = await pool.query("SELECT * FROM expense");
-        res.json(newTodo.rows[0]);
+        const {project_id} = req.body;
+        const expenses = await pool.query("SELECT * FROM expense e WHERE e.project_id = $1", [project_id]);
+        res.json(expenses.rows);
     } catch (err) {
         console.error(err.message)
     }
@@ -85,31 +105,34 @@ app.post("/expenses", authenticateToken, async (req, res) => {
 app.post("/addExpense", authenticateToken, async (req, res) => {
     try {
         const {project_id, category_id, name, description, amount} = req.body;
+        console.log(req)
         const t = new Date();
-        const newTodo = await pool.query("INSERT INTO Expense (project_id, category_id, name, description, amount, created_at, created_by, updated_at, updated_by) VALEUS($1, $2, $3, $4, $5, $6, $7, $8, $9)", [project_id, category_id, name, description, amount, t.toISOString(), req.user.name, t.toISOString(), req.user.name]);
-        res.json(newTodo.rows[0]);
+        const v = await pool.query("INSERT INTO Expense (project_id, category_id, name, description, amount, created_at, created_by, updated_at, updated_by) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)", [project_id, category_id, name, description, amount, t.toISOString(), req.user.name, t.toISOString(), req.user.name]);
+        return res.sendStatus(200);
     } catch (err) {
         console.error(err.message)
     }
 })
 
-// Update an expense for a user
+// Update an expense 
 app.delete("/editExpense", authenticateToken, async (req, res) => {
     try {
         const {id, project_id, category_id, name, description, amount} = req.body;
-        const newTodo = await pool.query("UPDATE Expense e SET project_id = $1, category_id = $2, name = $3, description = $4, amount = $5, updated_at = $6, updated_by = $7 WHERE e.id = id",  [project_id, category_id, name, description, amount, t.toISOString(), req.user.name]);
-        res.json(newTodo.rows[0]);
+        const v = await pool.query("UPDATE Expense e SET project_id = $1, category_id = $2, name = $3, description = $4, amount = $5, updated_at = $6, updated_by = $7 WHERE e.id = id",  [project_id, category_id, name, description, amount, t.toISOString(), req.user.name]);
+        return res.sendStatus(200);
     } catch (err) {
         console.error(err.message)
     }
 })
 
-// Update an expense for a user
+// Delete an expense
 app.delete("/deleteExpense", authenticateToken, async (req, res) => {
     try {
-        const {id} = req.body;
-        const newTodo = await pool.query("DELETE Expense e WHERE e.id = id",  [project_id]);
-        res.json(newTodo.rows[0]);
+        const {expense_id} = req.body;
+        console.log(expense_id)
+        const v = await pool.query("DELETE FROM Expense e WHERE e.id = $1",  [expense_id]);
+        console.log(v)
+        return res.sendStatus(200);
     } catch (err) {
         console.error(err.message)
     }
