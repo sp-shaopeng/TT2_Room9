@@ -1,14 +1,16 @@
+import axios from "axios";
 import React, { useState } from "react"
 import { useNavigate } from 'react-router-dom';
-// import APIKit, {setClientToken} from '../APIKit';
 
 const Login = () => {
 
     const [user, setUser] = useState("");
     const [password, setPassword] = useState("");
-    const [loggedIn, setLoggedIn] = useState(false);
+    const [isAuthorized, setIsAuthorized] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState({})
+    
     const navigate = useNavigate();
-
 
     function validateForm() {
         return user.length > 0 && password.length > 0;
@@ -16,12 +18,27 @@ const Login = () => {
 
     function handleSubmit(event) {
         event.preventDefault();
-        if (user === "user" && password==="password") {
-            console.log("Login successful ! ")
-            setLoggedIn(true)
+
+        const onSuccess = ({data}) => {
+            setIsAuthorized(true)
+            setIsLoading(false)
             navigate('/projectView', { replace: true }) 
-            console.log(loggedIn)
         }
+      
+        const onFailure = error => {
+            console.log(error && error.response);
+            setError(error.response.data)
+            console.log(error)
+            setIsLoading(false)
+        }
+
+        // loading...
+        setIsLoading(true)
+
+        const username = user
+        axios.post("http://178.128.111.201:49161/login", {username, password})
+        .then(onSuccess)
+        .catch(onFailure);
     }
 
       
