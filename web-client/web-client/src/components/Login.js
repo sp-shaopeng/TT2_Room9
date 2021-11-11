@@ -1,6 +1,6 @@
 import React, { useState } from "react"
-import { Link } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
+// import APIKit, {setClientToken} from '../APIKit';
 
 const Login = () => {
 
@@ -26,7 +26,7 @@ const Login = () => {
 
       
     return (
-        <div>
+        <div className="card col-12 col-lg-4 login-card mt-2 hv-center">
             <form onSubmit={handleSubmit}>
                 <h3>Log In</h3>
                 <div className="form-group">
