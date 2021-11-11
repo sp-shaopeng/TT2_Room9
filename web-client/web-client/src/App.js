@@ -3,6 +3,8 @@ import Login from "./components/Login"
 import ProjectView from "./components/ProjectView";
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Table from './components/ExpenseView'
+// import { Tab } from "react-bootstrap";
 
 function App() {
 
@@ -12,6 +14,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/projectView" element={<ProjectView />} />
+          <Route path="/expenseView" element={<Table />} />
+          
         </Routes>
       </BrowserRouter>
     </div>

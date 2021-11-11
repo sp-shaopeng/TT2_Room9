@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, { useState } from "react"
 import { useNavigate } from 'react-router-dom';
 import AuthService from './Authentication'
@@ -19,8 +18,8 @@ const Login = () => {
 
     function handleSubmit(event) {
         event.preventDefault();
-        AuthService.login(user, password)
-        const onSuccess = ({data}) => {
+        
+        const onSuccess = () => {
             setIsAuthorized(true)
             setIsLoading(false)
             navigate('/projectView', { replace: true }) 
@@ -37,8 +36,7 @@ const Login = () => {
         setIsLoading(true)
 
         const username = user
-        axios.post("http://178.128.111.201:49161/login", {username, password})
-        .then(onSuccess)
+        AuthService.login(username, password).then(onSuccess)
         .catch(onFailure);
     }
 

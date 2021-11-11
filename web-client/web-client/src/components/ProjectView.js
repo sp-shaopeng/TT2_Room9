@@ -3,7 +3,7 @@ import {mockProjects} from '../data/mockProjects'
 import { Button, Modal } from 'react-bootstrap';
 import './ProjectView.css'
 import { Link } from "react-router-dom";
-import userService from './userService'
+import userService from './UserService'
 
 const renderTableData = (props, onClick) => {
 
@@ -47,7 +47,6 @@ const ProjectView = () => {
             <ul>
             <li>
                 <Link to="/" 
-                    // onClick={signOut()}
                 >
                     Sign out
                 </Link>
