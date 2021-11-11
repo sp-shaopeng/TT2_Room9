@@ -12,6 +12,10 @@ class UserService {
     return axios.post(API_URL + 'expenses', {project_id}, { headers: authHeader() });
   }
 
+  addExpenses(project_id, category_id, name, description, amount) {
+    return axios.post(API_URL + 'addExpense', {project_id, category_id, name, description, amount}, { headers: authHeader() });
+  }
+
 }
 
 export default new UserService();

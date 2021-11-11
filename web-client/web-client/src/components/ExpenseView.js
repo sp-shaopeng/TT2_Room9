@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
 import "./ProjectView.css"
-import userService from './UserService'
+import UserService from './UserService'
 import { Button, Modal } from 'react-bootstrap';
 import { Link, useLocation } from "react-router-dom";
 
@@ -37,7 +37,7 @@ const ExpenseView = () => {
     console.log(state)
 
     const fetchData = () => {
-        return userService.getExpenses(project_id).then((response) => {
+        return UserService.getExpenses(project_id).then((response) => {
             const myExpenses = response.data
             setExpenses(myExpenses)
             console.log(expenses)
@@ -52,6 +52,32 @@ const ExpenseView = () => {
 
     const handleShow = () => setShow(true)
     const handleClose = () => setShow(false)
+
+    const handleAddFormChange = (event) => {
+        event.preventDefault();
+        const fieldName = event.target.getAttribute('name');
+        const fieldValue = event.target.value;
+        const newFormData = {...addFormData};
+        newFormData[fieldName] = fieldValue;
+        setAddFormData(newFormData)
+    };
+
+    const handleAddFormSubmit = (event) => {
+        event.preventDefault();
+        UserService.addExpenses(addFormData.project_id,
+                    addFormData.category_id,
+                    addFormData.name,
+                    addFormData.description,
+                    addFormData.amount)
+
+    }
+    const[addFormData,setAddFormData] = useState({
+        project_id: '',
+        category_id: '',
+        name: '',
+        description: '',
+        amount:'',
+    })
 
     return (
         <div>
@@ -83,9 +109,9 @@ const ExpenseView = () => {
            return renderTableData(props)
         })}
           </table>
-          {/* <button onClick = {handleShow}>
-            Click here to update expense data
-          </button> */}
+          <button onClick = {handleShow}>
+            Click here to add expense data
+          </button>
     
           <Modal
             show={show}
@@ -96,16 +122,25 @@ const ExpenseView = () => {
             centered
           >
             <Modal.Header closeButton>
-              <Modal.Title>Edit Expense</Modal.Title>
+              <Modal.Title>Add Expense</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              Expense Data Here
+
+              <h2>Add Transaction</h2>
+            <form onSubmit = {handleAddFormSubmit}>
+                 <input type ="number" name = "project_id" required="required" placeholder = "Project ID" onChange = {handleAddFormChange}/>
+                 <input type ="number" name = "category_id" required="required" placeholder = "Category ID" onChange = {handleAddFormChange}/>
+                 <input type ="text" name = "name" required="required" placeholder = "Transaction Name" onChange = {handleAddFormChange}/>
+                 <input type ="text" name = "description" required="required" placeholder = "Description" onChange = {handleAddFormChange}/>
+                 <input type ="number" name = "amount" required="required" placeholder = "Amount" onChange = {handleAddFormChange}/>
+                 <button type = "submit">Add Transaction</button>
+            </form>
             </Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={handleClose}>
                 Cancel
               </Button>
-              <Button variant="primary" onClick= {handleClose}>Save</Button>
+              {/* <Button variant="primary" onClick= {handleClose}>Add</Button> */}
             </Modal.Footer>
           </Modal>
         </div>
@@ -113,94 +148,3 @@ const ExpenseView = () => {
     }
     
     export default ExpenseView
-    // const[transactions,settransactions] = useState(data);
-    // const[addFormData,setAddFormData] = useState({
-    //     project_id: '',
-    //     category_id: '',
-    //     name: '',
-    //     description: '',
-    //     amount:'',
-    //     created_at: '',
-    //     created_by:'',
-    //     updated_at:'',
-    //     updated_by:''
-    // })
-
-    // const handleAddFormChange = (event) => {
-    //     event.preventDefault();
-    //     const fieldName = event.target.getAttribute('name');
-    //     const fieldValue = event.target.value;
-    //     const newFormData = {...addFormData};
-    //     newFormData[fieldName] = fieldValue;
-    //     setAddFormData(newFormData)
-    // };
-
-    // const handleAddFormSubmit = (event) => {
-    //     event.preventDefault();
-    //     const newContact = {
-    //         id: nanoid(),
-    //         project_id: addFormData.project_id,
-    //         category_id: addFormData.category_id,
-    //         name: addFormData.name,
-    //         description: addFormData.description,
-    //         amount:addFormData.amount,
-    //         created_at: addFormData.created_at,
-    //         created_by:addFormData.created_by,
-    //         updated_at:addFormData.updated_at,
-    //         updated_by:addFormData.updated_by,
-    //     };
-    //     const newContacts = [...transactions,newContact]
-    //     settransactions(newContacts);
-    // }
-
-//     return (
-//         <div>
-//             <table>
-//                 <thead>
-//                     <tr>
-//                         <th>Project ID</th>
-//                         <th>Category ID</th>
-//                         <th>Transaction Name</th>
-//                         <th>Description</th>
-//                         <th>Amount</th>
-//                         <th>Created on</th>
-//                         <th>Created by</th>
-//                         <th>Updated on</th>
-//                         <th>Updated by</th>
-//                     </tr>
-//                 </thead>
-//                 <tbody>
-//                     {transactions.map((transaction)=>
-//                     <tr>
-//                         <td>{transaction.project_id}</td>
-//                         <td>{transaction.category_id}</td>
-//                         <td>{transaction.name}</td>
-//                         <td>{transaction.description}</td>
-//                         <td>{transaction.amount}</td>
-//                         <td>{transaction.created_at}</td>
-//                         <td>{transaction.created_by}</td>
-//                         <td>{transaction.updated_at}</td>
-//                         <td>{transaction.updated_by}</td>
-//                     </tr>
-//                     )}
-//             </tbody>
-//             </table>
-
-//         <h2>Add Transaction</h2>
-//         <form onSubmit = {handleAddFormSubmit}>
-//                 <input type ="text" name = "project_id" required="required" placeholder = "Project ID" onChange = {handleAddFormChange}/>
-//                 <input type ="text" name = "category_id" required="required" placeholder = "Category ID" onChange = {handleAddFormChange}/>
-//                 <input type ="text" name = "name" required="required" placeholder = "Transaction Name" onChange = {handleAddFormChange}/>
-//                 <input type ="text" name = "description" required="required" placeholder = "Description" onChange = {handleAddFormChange}/>
-//                 <input type ="text" name = "amount" required="required" placeholder = "Amount" onChange = {handleAddFormChange}/>
-//                 <input type ="text" name = "created_at" required="required" placeholder = "Created on" onChange = {handleAddFormChange}/>
-//                 <input type ="text" name = "created_by" required="required" placeholder = "Created by" onChange = {handleAddFormChange}/>
-//                 <input type ="text" name = "updated_at" required="required" placeholder = "Updated on" onChange = {handleAddFormChange}/>
-//                 <input type ="text" name = "updated_by" required="required" placeholder = "Updated by" onChange = {handleAddFormChange}/>
-//                 <button type = "submit">Add Transaction</button>
-//         </form>
-//         </div>
-//     )
-// }
-
-// export default ExpenseView
