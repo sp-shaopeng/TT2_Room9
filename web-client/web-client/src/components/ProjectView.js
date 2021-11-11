@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react'
 import { Button, Modal } from 'react-bootstrap';
 import './ProjectView.css'
 import { Link } from "react-router-dom";
-import userService from './UserService'
+import UserService from './UserService'
 import { useNavigate } from 'react-router-dom';
 
 const RenderTableData = (props, setSelectedID, setSelected) => {
@@ -44,7 +44,7 @@ const ProjectView = () => {
   }, [selected])
 
   const fetchData = () => {
-    return userService.getProjects().then((response) => {
+    return UserService.getProjects().then((response) => {
       const myProjects = response.data
       setProjects(myProjects)
       console.log(projects)
