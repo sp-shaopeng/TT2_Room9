@@ -1,13 +1,20 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import {mockProjects} from '../data/mockProjects'
+import { Button, Modal } from 'react-bootstrap';
+import axios from "axios"
 import './ProjectView.css'
 
 const renderTableData = (props, onClick) => {
+
+  const handleClick = () => {
+    console.log("clicked!")
+  }
+
   const { id, user_id, name, budget, description } = props
 
   return (
     <tbody>
-      <tr key={id} onClick = {onClick} >
+      <tr key={id} onClick = {handleClick}>
           <td>{id}</td>
           <td>{user_id}</td>
           <td>{name}</td>
@@ -19,6 +26,20 @@ const renderTableData = (props, onClick) => {
 }
 
 const ProjectView = () => {
+
+  const fetchData = () => {
+    return axios.get("").then((response) => console.log(response.data))
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
+
+  const [show, setShow] = useState(false)
+
+  const handleShow = () => setShow(true)
+  const handleClose = () => setShow(false)
+
   return (
     <div>
       <h1>Project View</h1>
@@ -36,6 +57,31 @@ const ProjectView = () => {
           return renderTableData(props)
         })}
       </table>
+      <button onClick = {handleShow}>
+        Click Me!
+      </button>
+
+      <Modal
+        show={show}
+        onHide={handleClose}
+        backdrop="static"
+        size="lg"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Edit Expense</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Expense Data Here
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick= {handleClose}>Save</Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   )
 }
