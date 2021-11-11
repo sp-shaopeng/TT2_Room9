@@ -50,11 +50,6 @@ const ProjectView = () => {
       console.log(projects)
     })
   }
-  
-  const [show, setShow] = useState(false)
-
-  const handleShow = () => setShow(true)
-  const handleClose = () => setShow(false)
 
   return (
     <div>
@@ -84,31 +79,6 @@ const ProjectView = () => {
            return RenderTableData(props, setSelectedID, setSelected)
         })}
       </table>
-      <button onClick = {handleShow}>
-        Click Me!
-      </button>
-
-      <Modal
-        show={show}
-        onHide={handleClose}
-        backdrop="static"
-        size="lg"
-        aria-labelledby="contained-modal-title-vcenter"
-        centered
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Edit Expense</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          Expense Data Here
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick= {handleClose}>Save</Button>
-        </Modal.Footer>
-      </Modal>
     </div>
   )
 }
