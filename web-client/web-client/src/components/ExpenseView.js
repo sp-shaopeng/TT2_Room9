@@ -1,12 +1,12 @@
 import React, {useState} from "react";
-import "./Table.css"
+import "./ProjectView.css"
 import data from "../data/expense.json"
 
-const Table = () => {
+const ExpenseView = () => {
     const[transactions,settransactions] = useState(data);
 
     return (
-        <table>
+        <table class="styled-table">
             <thead>
                 <tr>
                     <th>Project ID</th>
@@ -21,7 +21,7 @@ const Table = () => {
                 </tr>
             </thead>
             <tbody>
-                {transactions.map((transaction)=>
+            {transactions.map((transaction)=>
                                 <tr>
                                 <td>{transaction.project_id}</td>
                                 <td>{transaction.category_id}</td>
@@ -39,4 +39,5 @@ const Table = () => {
     )
 }
 
-export default Table
+export default ExpenseView
+
