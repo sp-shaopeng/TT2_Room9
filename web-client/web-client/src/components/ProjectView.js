@@ -5,14 +5,14 @@ import { Link } from "react-router-dom";
 import userService from './userService'
 import { useNavigate } from 'react-router-dom';
 
-const renderTableData = (props, onClick) => {
-
-  const navigate = useNavigate();
-  const handleClick = () => {
-    navigate('/ExpenseView', { replace: true }) 
-  }
-
+const RenderTableData = (props, setSelectedID, setSelected) => {
+  
   const { id, user_id, name, budget, description } = props
+
+  const handleClick = () => {
+    setSelectedID(id)
+    setSelected(true)
+  }
 
   return (
     <tbody>
@@ -29,11 +29,19 @@ const renderTableData = (props, onClick) => {
 
 const ProjectView = () => {
 
+  const navigate = useNavigate()
   const [projects, setProjects] = useState()
+  const [selectedID, setSelectedID] = useState("")
+  const [selected, setSelected] = useState(false)
 
   useEffect(() => {
     fetchData()
   }, [])
+
+  useEffect(() => {
+    if (selected)
+      navigate('/expenseView', { selectedID }) 
+  }, [selected])
 
   const fetchData = () => {
     return userService.getProjects().then((response) => {
@@ -73,7 +81,7 @@ const ProjectView = () => {
           </tr>
         </thead>
         {projects?.map((props) => {
-           return renderTableData(props)
+           return RenderTableData(props, setSelectedID, setSelected)
         })}
       </table>
       <button onClick = {handleShow}>
