@@ -74,7 +74,7 @@ function authenticateToken(req, res, next) {
 // Get the list of expense based on the database
 app.post("/expenses", authenticateToken, async (req, res) => {
     try {
-        const newTodo = await pool.query("SELECT * FROM expense WHERE id = $1", [req.user.id]);
+        const newTodo = await pool.query("SELECT * FROM expense");
         res.json(newTodo.rows[0]);
     } catch (err) {
         console.error(err.message)
