@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from "react";
 import "./ProjectView.css"
-import mockExpense from "../data/expense.json"
 import userService from './UserService'
 import { Button, Modal } from 'react-bootstrap';
 import { Link, useLocation } from "react-router-dom";
@@ -15,8 +14,7 @@ const renderTableData = (props) => {
   
     return (
       <tbody>
-        <tr key={project_id} //onClick = {handleClick}
-        >
+        <tr key={project_id}>
             <td>{project_id}</td>
             <td>{category_id}</td>
             <td>{name}</td>
@@ -35,7 +33,8 @@ const renderTableData = (props) => {
 const ExpenseView = () => {
     const [expenses, setExpenses] = useState()
     const {state} = useLocation();
-    const project_id = 2;
+    const project_id = state;
+    console.log(state)
 
     const fetchData = () => {
         return userService.getExpenses(project_id).then((response) => {
@@ -84,9 +83,9 @@ const ExpenseView = () => {
            return renderTableData(props)
         })}
           </table>
-          <button onClick = {handleShow}>
+          {/* <button onClick = {handleShow}>
             Click here to update expense data
-          </button>
+          </button> */}
     
           <Modal
             show={show}
@@ -205,4 +204,3 @@ const ExpenseView = () => {
 // }
 
 // export default ExpenseView
-

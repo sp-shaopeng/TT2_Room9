@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react'
 import { Button, Modal } from 'react-bootstrap';
 import './ProjectView.css'
 import { Link } from "react-router-dom";
-import userService from './userService'
+import userService from './UserService'
 import { useNavigate } from 'react-router-dom';
 
 const RenderTableData = (props, setSelectedID, setSelected) => {
@@ -40,7 +40,7 @@ const ProjectView = () => {
 
   useEffect(() => {
     if (selected)
-      navigate('/expenseView', { selectedID }) 
+      navigate('/expenseView', { state: selectedID }) 
   }, [selected])
 
   const fetchData = () => {

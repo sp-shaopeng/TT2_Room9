@@ -7,6 +7,11 @@ class UserService {
   getProjects() {
     return axios.post(API_URL + 'projects', {}, { headers: authHeader() });
   }
+
+  getExpenses(project_id) {
+    return axios.post(API_URL + 'expenses', {project_id}, { headers: authHeader() });
+  }
+
 }
 
 export default new UserService();
