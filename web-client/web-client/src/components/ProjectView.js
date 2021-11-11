@@ -1,14 +1,15 @@
 import React, {useEffect, useState} from 'react'
-import {mockProjects} from '../data/mockProjects'
 import { Button, Modal } from 'react-bootstrap';
 import './ProjectView.css'
 import { Link } from "react-router-dom";
 import userService from './userService'
+import { useNavigate } from 'react-router-dom';
 
 const renderTableData = (props, onClick) => {
 
+  const navigate = useNavigate();
   const handleClick = () => {
-    console.log("clicked!")
+    navigate('/ExpenseView', { replace: true }) 
   }
 
   const { id, user_id, name, budget, description } = props
@@ -28,14 +29,20 @@ const renderTableData = (props, onClick) => {
 
 const ProjectView = () => {
 
-  const fetchData = () => {
-    return userService.getProjects().then((response) => console.log(response.data))
-  }
+  const [projects, setProjects] = useState()
 
   useEffect(() => {
     fetchData()
   }, [])
 
+  const fetchData = () => {
+    return userService.getProjects().then((response) => {
+      const myProjects = response.data
+      setProjects(myProjects)
+      console.log(projects)
+    })
+  }
+  
   const [show, setShow] = useState(false)
 
   const handleShow = () => setShow(true)
@@ -65,8 +72,8 @@ const ProjectView = () => {
             <th>Description</th>
           </tr>
         </thead>
-        {mockProjects.map(function(props){
-          return renderTableData(props)
+        {projects?.map((props) => {
+           return renderTableData(props)
         })}
       </table>
       <button onClick = {handleShow}>
