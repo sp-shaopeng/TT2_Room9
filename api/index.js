@@ -93,7 +93,8 @@ app.post("/projects", authenticateToken, async (req, res) => {
 // Get the list of expense based on the database
 app.post("/expenses", authenticateToken, async (req, res) => {
     try {
-        const expenses = await pool.query("SELECT * FROM expense");
+        const {project_id} = req.body;
+        const expenses = await pool.query("SELECT * FROM expense e where e.project_id = $1", [project_id]);
         res.json(expenses.rows);
     } catch (err) {
         console.error(err.message)
