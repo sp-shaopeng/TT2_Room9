@@ -170,7 +170,15 @@ const ExpenseView = () => {
               <Modal.Title>Edit Expense</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              Expense Data Here!
+            <h2>Edit Transaction</h2>
+            <form onSubmit = {handleAddFormSubmit}>
+                 <input type ="number" name = "project_id" required="required" placeholder = "Project ID" onChange = {handleAddFormChange}/>
+                 <input type ="number" name = "category_id" required="required" placeholder = "Category ID" onChange = {handleAddFormChange}/>
+                 <input type ="text" name = "name" required="required" placeholder = "Transaction Name" onChange = {handleAddFormChange}/>
+                 <input type ="text" name = "description" required="required" placeholder = "Description" onChange = {handleAddFormChange}/>
+                 <input type ="number" name = "amount" required="required" placeholder = "Amount" onChange = {handleAddFormChange}/>
+                 <button type = "submit">Edit Transaction</button>
+            </form>
             </Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={handleEditClose}>
