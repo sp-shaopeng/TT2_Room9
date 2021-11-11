@@ -93,8 +93,7 @@ app.post("/projects", authenticateToken, async (req, res) => {
 // Get the list of expense based on the database
 app.post("/expenses", authenticateToken, async (req, res) => {
     try {
-        const {project_id} = req.body;
-        const expenses = await pool.query("SELECT * FROM expense e WHERE e.project_id = $1", [project_id]);
+        const expenses = await pool.query("SELECT * FROM expense");
         res.json(expenses.rows);
     } catch (err) {
         console.error(err.message)
@@ -115,10 +114,12 @@ app.post("/addExpense", authenticateToken, async (req, res) => {
 })
 
 // Update an expense 
-app.delete("/editExpense", authenticateToken, async (req, res) => {
+app.post("/editExpense", authenticateToken, async (req, res) => {
     try {
         const {id, project_id, category_id, name, description, amount} = req.body;
-        const v = await pool.query("UPDATE Expense e SET project_id = $1, category_id = $2, name = $3, description = $4, amount = $5, updated_at = $6, updated_by = $7 WHERE e.id = id",  [project_id, category_id, name, description, amount, t.toISOString(), req.user.name]);
+        const t = new Date();
+
+        const v = await pool.query("UPDATE Expense e SET project_id = $1, category_id = $2, name = $3, description = $4, amount = $5, updated_at = $6, updated_by = $7 WHERE e.id = $8",  [project_id, category_id, name, description, amount, t.toISOString(), req.user.name, id]);
         return res.sendStatus(200);
     } catch (err) {
         console.error(err.message)
