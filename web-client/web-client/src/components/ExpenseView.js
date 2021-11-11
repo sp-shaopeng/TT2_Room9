@@ -5,7 +5,7 @@ import { Button, Modal } from 'react-bootstrap';
 import { Link, useLocation } from "react-router-dom";
 
 
-const renderTableData = (props) => {
+const renderTableData = (props, handleEditShow, handleDelete) => {
 
     const { project_id, category_id,
             name, description, amount,
@@ -24,6 +24,10 @@ const renderTableData = (props) => {
             <td>{created_by}</td>
             <td>{updated_at}</td>
             <td>{updated_by}</td>
+            <td>    
+                <button onClick = {handleEditShow}>Edit Entry</button>
+                <button onClick = {handleDelete}>Delete Entry</button>
+            </td>
         </tr>
       </tbody>
     )
@@ -47,6 +51,10 @@ const ExpenseView = () => {
     useEffect(() => {
     fetchData()
     }, [])
+
+    const doDelete = () => {
+        
+    }
 
     const [show, setShow] = useState(false)
 
@@ -78,6 +86,10 @@ const ExpenseView = () => {
         description: '',
         amount:'',
     })
+    const [editShow, setEditShow] = useState(false)
+
+    const handleEditShow = () => setEditShow(true)
+    const handleEditClose = () => setEditShow(false)
 
     return (
         <div>
@@ -103,10 +115,11 @@ const ExpenseView = () => {
                 <th>Created By</th>
                 <th>Updated At</th>
                 <th>Updated By</th>
+                <th>Actions</th>
               </tr>
             </thead>
             {expenses?.map((props) => {
-           return renderTableData(props)
+           return renderTableData(props, handleEditShow, doDelete)
         })}
           </table>
           <button onClick = {handleShow}>
@@ -141,6 +154,29 @@ const ExpenseView = () => {
                 Cancel
               </Button>
               {/* <Button variant="primary" onClick= {handleClose}>Add</Button> */}
+            </Modal.Footer>
+          </Modal>
+
+          
+          <Modal
+            show={editShow}
+            onHide={handleEditClose}
+            backdrop="static"
+            size="lg"
+            aria-labelledby="contained-modal-title-vcenter"
+            centered
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>Edit Expense</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              Expense Data Here!
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleEditClose}>
+                Cancel
+              </Button>
+              <Button variant="primary" onClick= {handleEditClose}>Save</Button>
             </Modal.Footer>
           </Modal>
         </div>
