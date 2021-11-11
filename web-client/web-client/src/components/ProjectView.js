@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react'
 import {mockProjects} from '../data/mockProjects'
 import { Button, Modal } from 'react-bootstrap';
-import axios from "axios"
 import './ProjectView.css'
 import { Link } from "react-router-dom";
+import userService from './userService'
 
 const renderTableData = (props, onClick) => {
 
@@ -29,7 +29,7 @@ const renderTableData = (props, onClick) => {
 const ProjectView = () => {
 
   const fetchData = () => {
-    return axios.get("").then((response) => console.log(response.data))
+    return userService.getProjects().then((response) => console.log(response.data))
   }
 
   useEffect(() => {

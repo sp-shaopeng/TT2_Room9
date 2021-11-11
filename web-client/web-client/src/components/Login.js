@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react"
 import { useNavigate } from 'react-router-dom';
+import AuthService from './Authentication'
 
 const Login = () => {
 
@@ -18,7 +19,7 @@ const Login = () => {
 
     function handleSubmit(event) {
         event.preventDefault();
-
+        AuthService.login(user, password)
         const onSuccess = ({data}) => {
             setIsAuthorized(true)
             setIsLoading(false)
