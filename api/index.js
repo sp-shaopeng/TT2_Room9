@@ -5,7 +5,8 @@ const app = express()
 const cors = require('cors')
 const pool = require('./db')
 const jwt = require('jsonwebtoken')
-const { values } = require("lodash")
+
+app.use(cors())
 
 app.use(express.json())
 
@@ -16,8 +17,8 @@ app.post('/signup', async (req, res) => {
         const newUser = await pool.query("INSERT INTO users (username, password, name, appointment) VALUES($1, $2, $3, $4)", [username, password, name, appointment]);
         res.sendStatus(200)
     } catch (err) {
-        res.sendStatus(400)
         console.log(err.message)
+        res.sendStatus(400)
     }
 
 }) 
@@ -57,17 +58,13 @@ function generateAccessToken(user) {
 function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization']
     const token = authHeader && authHeader
-    console.log(authHeader)
-    console.log(token)
     if(token == null) {
         return res.sendStatus(401)
     }
-
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
         if (err) {
             return res.sendStatus(403)
         }
-        console.log(user)
         req.user = user
         next()
     })
@@ -81,12 +78,10 @@ app.post("/projects", authenticateToken, async (req, res) => {
         res.json(projects.rows);
     } catch (err) {
         console.error(err.message)
+        res.sendStatus(400)
+
     }
 })
-
-
-
-
 
 
 
@@ -98,6 +93,8 @@ app.post("/expenses", authenticateToken, async (req, res) => {
         res.json(expenses.rows);
     } catch (err) {
         console.error(err.message)
+        return res.sendStatus(400)
+
     }
 })
 
@@ -105,12 +102,13 @@ app.post("/expenses", authenticateToken, async (req, res) => {
 app.post("/addExpense", authenticateToken, async (req, res) => {
     try {
         const {project_id, category_id, name, description, amount} = req.body;
-        console.log(req)
         const t = new Date();
         const v = await pool.query("INSERT INTO Expense (project_id, category_id, name, description, amount, created_at, created_by, updated_at, updated_by) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)", [project_id, category_id, name, description, amount, t.toISOString(), req.user.name, t.toISOString(), req.user.name]);
-        return res.sendStatus(200);
+        res.sendStatus(200);
     } catch (err) {
-        console.error(err.message)
+        console.error(err.message);
+        res.sendStatus(400);
+        
     }
 })
 
@@ -121,9 +119,11 @@ app.post("/editExpense", authenticateToken, async (req, res) => {
         const t = new Date();
 
         const v = await pool.query("UPDATE Expense e SET project_id = $1, category_id = $2, name = $3, description = $4, amount = $5, updated_at = $6, updated_by = $7 WHERE e.id = $8",  [project_id, category_id, name, description, amount, t.toISOString(), req.user.name, id]);
-        return res.sendStatus(200);
+        res.sendStatus(200);
     } catch (err) {
         console.error(err.message)
+        res.sendStatus(400)
+
     }
 })
 
@@ -131,15 +131,85 @@ app.post("/editExpense", authenticateToken, async (req, res) => {
 app.delete("/deleteExpense", authenticateToken, async (req, res) => {
     try {
         const {expense_id} = req.body;
-        console.log(expense_id)
         const v = await pool.query("DELETE FROM Expense e WHERE e.id = $1",  [expense_id]);
-        console.log(v)
-        return res.sendStatus(200);
+        res.sendStatus(200);
     } catch (err) {
         console.error(err.message)
+        res.sendStatus(400)
+
     }
 })
 
+
+
+
+
+// Get the budget wrt the project
+app.post("/getBudget", authenticateToken, async (req, res) => {
+    try {
+        const {project_id} = req.body;
+        const budget = await pool.query("SELECT p.budget FROM project p where p.id = $1", [project_id]);
+        if(budget.rows[0] == null) {
+            throw new Error('No such project');
+        }
+        res.json(budget.rows[0]);
+    } catch (err) {
+        console.error(err.message)
+        res.sendStatus(400)
+    }
+})
+
+
+// edit budget wrt the project
+app.post("/editBudget", authenticateToken, async (req, res) => {
+    try {
+        const {project_id, budget} = req.body;
+        const v = await pool.query("UPDATE project SET budget = $1 where id = $2", [budget, project_id]);
+        res.json(200);
+    } catch (err) {
+        console.error(err.message)
+        res.sendStatus(400)
+    }
+})
+
+
+// add new project, the owner will add the project
+app.post("/addProject", authenticateToken, async (req, res) => {
+    try {
+        const {name, budget, description} = req.body;
+        const v = await pool.query("INSERT INTO project (user_id, name, budget, description) VALUES($1, $2, $3, $4)", [req.user.id, name, budget, description]);
+        res.json(200);
+    } catch (err) {
+        console.error(err.message)
+        res.sendStatus(400)
+    }
+})
+
+
+// edit project info 
+app.post("/editProject", authenticateToken, async (req, res) => {
+    try {
+        const {name, budget, description, project_id} = req.body;
+        const v = await pool.query("UPDATE project SET name = $1, budget = $2, description = $3 WHERE id = $4", [name, budget, description, project_id]);
+        res.json(200);
+    } catch (err) {
+        console.error(err.message)
+        res.sendStatus(400)
+    }
+})
+
+
+//delete project
+app.delete("/deleteProject", authenticateToken, async (req, res) => {
+    try {
+        const {project_id} = req.body;
+        const v = await pool.query("DELETE FROM Project WHERE id = $1",  [project_id]);
+        res.json(200)
+    } catch (err) {
+        console.error(err.message)
+        res.sendStatus(400)
+    }
+})
 
 
 
